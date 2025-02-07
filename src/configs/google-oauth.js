@@ -9,7 +9,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://menshopbackend.onrender.com/auth/google/callback",
+      callbackURL: "https://unrivaled-taiyaki-6d08b0.netlify.app/auth/google/callback",
       scope:['profile','email'],
       passReqToCallback: true,
     },
