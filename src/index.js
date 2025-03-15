@@ -142,7 +142,7 @@ app.get('/auth/google/callback',
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://unrivaled-taiyaki-6d08b0.netlify.app/auth/google/callback",
+  callbackURL: "/auth/google/callback",
   scope: ['profile', 'email'] 
 },
   function (accessToken, refreshToken, profile, done) {
