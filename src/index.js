@@ -136,7 +136,7 @@ app.get('/profile', ensureAuthenticated, (req, res) => {
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/');
+    res.redirect('https://unrivaled-taiyaki-6d08b0.netlify.app');
   }
 );
 passport.use(new GoogleStrategy({
