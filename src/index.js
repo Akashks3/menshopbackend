@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require('passport');
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
@@ -9,9 +10,9 @@ const app = express();
 const EcommerceProducts = require("./models/ProductsModal");
 const product = require("./data/menjeans");
 const productApi = require("./controllers/ProductsController");
-const passport = require("./configs/google-oauth");
 const Order = require("./models/order"); 
 const port = process.env.PORT || 5000;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const razorpay = new Razorpay({
   key_id: 'rzp_test_Xa1fAmRtAIprCh', 
@@ -117,22 +118,47 @@ app.post("/login", login);
 
 app.use("/product", productApi);
 
-passport.serializeUser(function (user, done) {
-  done(null, user);
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+ 
+const ensureAuthenticated=(req, res, next) =>{
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
+app.get('/profile', ensureAuthenticated, (req, res) => {
+  res.send('This is your profile page.');
 });
 
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/auth/google/callback"
+},
+  function (accessToken, refreshToken, profile, done) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return done(err, user);
+    });
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
 
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile","email"] }));
-app.get("/auth/google/callback", passport.authenticate("google", {
-  failureRedirect: "/auth/google/failure",
-}), (req, res) => {
-  const { user } = req;
-  console.log("user", user);
-  const token = newToken(user);
-  return res.send({ user, token });
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
 });
 
 app.listen(port, () => {
