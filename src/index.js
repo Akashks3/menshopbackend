@@ -142,7 +142,7 @@ app.get('/auth/google/callback',
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://menshopbackend.onrender.com/auth/google/callback",
+  callbackURL: "https://menshopbackend.onrender.com/auth/google/callback",
   scope: ['profile', 'email'] 
 },
   function (accessToken, refreshToken, profile, done) {
