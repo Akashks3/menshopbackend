@@ -134,9 +134,9 @@ app.get('/profile', ensureAuthenticated, (req, res) => {
 });
 
 app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/' }),
+  passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('');
+    res.redirect('/');
   }
 );
 passport.use(new GoogleStrategy({
